@@ -10,16 +10,13 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"time"
 )
 
 func main() {
+	defer Prompts()
 
 	speech := htgotts.Speech{Folder: "audio", Language: voices.English, Handler: &handlers.Native{}}
-
-	//loop := true
-
-	var ron = getInput()
-
 	var ronSwanson = func() string {
 
 		url := "https://ron-swanson-quotes.herokuapp.com/v2/quotes"
@@ -59,10 +56,50 @@ func main() {
 		return quotes[0]
 	}
 
-	err := speech.Speak("You Said: " + ron + " Ron Swanson says: " + ronSwanson())
-	log.Println("You Said: " + ron + " Ron Swanson says: " + ronSwanson())
-	if err != nil {
-		return
+	if getInput() == "Time" {
+		//Check greetTime and Greet accordingly
+		greetTime := getTime()
+		if greetTime == "morning" {
+			err := speech.Speak("Good " + greetTime + " " + getInput())
+			if err != nil {
+				return
+
+			}
+		} else if greetTime == "afternoon" {
+			err := speech.Speak("Good " + greetTime + " " + getInput())
+			if err != nil {
+				return
+
+			}
+		} else if greetTime == "evening" {
+			err := speech.Speak("Good " + greetTime + " " + getInput())
+			if err != nil {
+				return
+
+			}
+		}
+	} else {
+		err := speech.Speak("Ron Swanson says: " + ronSwanson())
+		log.Println("Ron Swanson says: " + ronSwanson())
+		if err != nil {
+			return
+
+		}
+	}
+
+}
+
+func getTime() string {
+	//GET TIME
+	//RETURN TIME
+	timeNow := time.Now()
+	timeString := timeNow.Format("15:04:05")
+	if timeString < "12:00:00" {
+		return "morning"
+	} else if timeString < "18:00:00" {
+		return "afternoon"
+	} else {
+		return "evening"
 	}
 
 }
@@ -104,20 +141,6 @@ type RonSwan struct {
 	Quote string `json:"quote"`
 }
 
-/*func displayRonSwanson() any {
-	var ron RonSwan
-	err := json.Unmarshal([]byte(ronSwanson()), &ron)
-	if err != nil {
-		fmt.Println(err)
-	}
-	fmt.Println(ron.Quote)
-	var hisQuote = "Ron Swanson: " + ron.Quote
-
-	return hisQuote
-}
-
-*/
-
 func getInput() string {
 	//TAKE CLI INPUT
 	var input string
@@ -127,4 +150,18 @@ func getInput() string {
 		return ""
 	}
 	return input
+}
+
+func Prompts() {
+	//PROMPTS
+	fmt.Println("Thank to the Ron Swanson Quote Generator!")
+
+	//Create back and forth between user and program
+	//Get user input
+	//Search for quotes
+	//Print quotes
+	//Ask if user wants to search again
+	//If yes, repeat
+	//If no, exit
+
 }
